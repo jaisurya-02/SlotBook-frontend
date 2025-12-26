@@ -67,13 +67,6 @@ const Login = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-500 bg-opacity-10 border border-red-500 text-red-500 px-4 py-3 text-sm">
-                {error}
-              </div>
-            )}
-
             {/* Email Field */}
             <div>
               <label className="block text-left text-sm font-semibold text-gray-300 mb-2">Email Address</label>

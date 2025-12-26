@@ -4,10 +4,13 @@ import { toast } from 'react-toastify'
 import axiosInstance from '../api/axios'
 
 const Signup = () => {
-  const [username, setUsername] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [userType, setUserType] = useState('student')
+  const [department, setDepartment] = useState('')
+  const [year, setYear] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
@@ -30,14 +33,23 @@ const Signup = () => {
       return
     }
 
+    // Validate student fields
+    if (userType === 'student' && (!department || !year)) {
+      setError('Department and year are required for students')
+      return
+    }
+
     setLoading(true)
 
     try {
-      const response = await axiosInstance.post('/auth/register', {
-        username,
+      const requestData = {
+        name,
         email,
-        password
-      })
+        password,
+        userType
+      }
+
+      const response = await axiosInstance.post('/auth/register', requestData)
 
       // Show success toast
       toast.success(response.data.message || 'Account created successfully!', {
@@ -46,7 +58,7 @@ const Signup = () => {
       })
       
       // Clear form
-      setUsername('')
+      setName('')
       setEmail('')
       setPassword('')
       setConfirmPassword('')
@@ -94,16 +106,16 @@ const Signup = () => {
               </div>
             )}
 
-            {/* Username Field */}
+            {/* Name Field */}
             <div>
-              <label className="block text-left text-sm font-semibold text-gray-300 mb-2">Username</label>
+              <label className="block text-left text-sm font-semibold text-gray-300 mb-2">Full Name</label>
               <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-opacity-20 transition-all shadow-sm"
-                placeholder="johndoe"
+                placeholder="John Doe"
               />
             </div>
 
@@ -119,6 +131,61 @@ const Signup = () => {
                 placeholder="you@college.edu"
               />
             </div>
+
+            {/* User Type Field */}
+            <div>
+              <label className="block text-left text-sm font-semibold text-gray-300 mb-2">I am a</label>
+              <select
+                value={userType}
+                onChange={(e) => setUserType(e.target.value)}
+                required
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-opacity-20 transition-all shadow-sm"
+              >
+                <option value="student">Student</option>
+                <option value="staff">Staff</option>
+              </select>
+            </div>
+
+            {/* Department Field - Only for Students */}
+            {userType === 'student' && (
+              <div>
+                <label className="block text-left text-sm font-semibold text-gray-300 mb-2">Department</label>
+                <select
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-opacity-20 transition-all shadow-sm"
+                >
+                  <option value="">Select Department</option>
+                  <option value="CSE">Computer Science and Engineering</option>
+                  <option value="ECE">Electronics and Communication Engineering</option>
+                  <option value="EEE">Electrical and Electronics Engineering</option>
+                  <option value="MECH">Mechanical Engineering</option>
+                  <option value="CIVIL">Civil Engineering</option>
+                  <option value="IT">Information Technology</option>
+                  <option value="AIDS">Artificial Intelligence and Data Science</option>
+                </select>
+              </div>
+            )}
+
+            {/* Year Field - Only for Students */}
+            {userType === 'student' && (
+              <div>
+                <label className="block text-left text-sm font-semibold text-gray-300 mb-2">Year</label>
+                <select
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-opacity-20 transition-all shadow-sm"
+                >
+                  <option value="">Select Year</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
+                </select>
+              </div>
+            )}
 
             {/* Password Field */}
             <div>
